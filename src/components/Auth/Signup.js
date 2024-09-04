@@ -56,9 +56,9 @@ const Signup = () => {
 
   return (
     <div className=" flex justify-center bg-gradient-to-br from-blue-200 to-blue-500 ">
-      <div className=" flex justify-start rounded-xl my-10 w-4/5 border-2 border-white backdrop-blur-md bg-slate-50 m-6 bg-opacity-15">
+      <div className=" flex justify-start rounded-xl my-20 w-4/5 border-2 border-white backdrop-blur-md bg-slate-50 m-6 bg-opacity-15">
         <form
-          className="text-white   p-4 md:w-1/2 w-full  flex flex-col justify-center "
+          className="text-white   p-4 md:w-1/2 w-full  flex flex-col justify-center  "
           style={{ fontFamily: "'Poppins',sans-serif" }}
         >
           <div className="font-extrabold text-lg md:text-2xl text-black mb-4 text-center ">
