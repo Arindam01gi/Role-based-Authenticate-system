@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 async function getOtp(payload, url) {
-
   return fetch(url, {
     method: "POST",
     headers: {
@@ -13,59 +14,77 @@ async function getOtp(payload, url) {
 }
 
 const Signup = () => {
+  const navigate = useNavigate(); // For navigation after successful OTP generation
 
   const [userData, setUserData] = useState({
     name: '',
     u_email: '',
     password: ''
-  })
+  });
 
   useEffect(() => {
     console.log('User data updated:', userData);
+  }, [userData]);
 
-  }, [userData])
+  const handleSuccessToast = () => toast.success("OTP generated successfully!");
+  const handleErrorToast = () => toast.error("Error generating OTP. Please try again.");
 
-  const genrateOtp = async () => {
-
+  const generateOtp = async () => {
     try {
-      const url = `${process.env.REACT_APP_API_URL}orm/user/generateotp/`
-      console.log("yrl", url)
-      const payload = { ...userData }
-      const resp = await getOtp(payload, url)
+      const url = `${process.env.REACT_APP_API_URL}/orm/user/generateotp/`;
+      const payload = { ...userData };
+      const resp = await getOtp(payload, url);
 
-      console.log(resp)
+      if (resp.status === '200') {
+        handleSuccessToast();
+        setTimeout(() => {
+          navigate("/verifyotp"); // Navigate to the verify OTP page after success
+        }, 1500); // Delay navigation to allow toast to be shown
+      } else {
+        handleErrorToast();
+      }
 
+      console.log(resp);
     } catch (err) {
-      console.log(err)
+      console.log(err);
+      handleErrorToast();
     }
-  }
-
+  };
 
   const updateUserData = (e) => {
-    const { id, value } = e.target
-    setUserData({ ...userData, [id]: value })
-    // console.log('User data',userData)
-  }
+    const { id, value } = e.target;
+    setUserData({ ...userData, [id]: value });
+  };
 
   const handleClick = (e) => {
-    e.preventDefault()
-
-    genrateOtp()
-  }
-
+    e.preventDefault();
+    generateOtp();
+  };
 
   return (
-    <div className=" flex justify-center bg-gradient-to-br from-blue-200 to-blue-500 ">
-      <div className=" flex justify-start rounded-xl my-20 w-4/5 border-2 border-white backdrop-blur-md bg-slate-50 m-6 bg-opacity-15">
+    <div className="flex justify-center bg-gradient-to-br from-blue-200 to-blue-500">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+      <div className="flex justify-start rounded-xl my-20 w-4/5 border-2 border-white backdrop-blur-md bg-slate-50 m-6 bg-opacity-15">
         <form
-          className="text-white   p-4 md:w-1/2 w-full  flex flex-col justify-center  "
-          style={{ fontFamily: "'Poppins',sans-serif" }}
+          className="text-white p-4 md:w-1/2 w-full flex flex-col justify-center"
+          style={{ fontFamily: "'Poppins', sans-serif" }}
         >
-          <div className="font-extrabold text-lg md:text-2xl text-black mb-4 text-center ">
+          <div className="font-extrabold text-lg md:text-2xl text-black mb-4 text-center">
             SIGN UP
           </div>
           <div className="flex flex-col justify-center items-center">
-            <div className=" px-3 ">
+            <div className="px-3">
               <input
                 type="text"
                 placeholder="Full Name"
@@ -77,9 +96,6 @@ const Signup = () => {
             </div>
 
             <div className="px-3">
-              {/* <label for="email" className="text-xl font-semibold">
-                Email
-              </label> */}
               <input
                 type="email"
                 placeholder="Email"
@@ -101,9 +117,12 @@ const Signup = () => {
             </div>
 
             <div className="px-3 mt-4">
-              <div className="bg-black  text-white px-[6rem] py-2 rounded-3xl text-xl shadow-md hover:bg-gray-800 ml-2 cursor-pointer whitespace-nowrap" onClick={handleClick}>
+              <button
+                className="bg-black text-white px-[6rem] py-2 rounded-3xl text-xl shadow-md hover:bg-gray-800 ml-2 cursor-pointer whitespace-nowrap"
+                onClick={handleClick}
+              >
                 Sign Up
-              </div>
+              </button>
               <Link to="/login">
                 <p className="p-3 text-black">
                   Already have an account? <strong>Log In</strong>
@@ -112,15 +131,13 @@ const Signup = () => {
               <p className="text-black text-center">Or</p>
             </div>
             <div className="px-3 mt-4">
-              <button className="bg-transparent border-2 border-black text-black px-10 py-2 flex gap-2 rounded-3xl text-sm shadow-md ">
-              <img src='/assets/google.svg' alt='google-logo' className="w-4 h-4 mt-[2px]"/> Sign up with
-                Google
+              <button className="bg-transparent border-2 border-black text-black px-10 py-2 flex gap-2 rounded-3xl text-sm shadow-md">
+                <img src='/assets/google.svg' alt='google-logo' className="w-4 h-4 mt-[2px]" /> Sign up with Google
               </button>
             </div>
             <div className="px-3 mt-4">
               <button className="bg-transparent border-2 border-black text-black px-8 py-2 flex rounded-3xl text-sm shadow-md gap-2">
-                <img src='/assets/facebook.svg' alt='fb-logo' className="w-4 h-4 mt-[2px]"/> Sign up with
-                Facebook
+                <img src='/assets/facebook.svg' alt='fb-logo' className="w-4 h-4 mt-[2px]" /> Sign up with Facebook
               </button>
             </div>
           </div>
